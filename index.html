@@ -53,12 +53,14 @@
   .nav-logo-badge {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold-dark));
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    color: var(--black);
-    box-shadow: 0 0 16px rgba(245,200,0,0.5);
+    overflow: hidden; /* Garante que a imagem fique redonda */
+  }
+
+  .nav-logo-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .nav-logo-text {
@@ -147,9 +149,19 @@
     overflow: hidden;
   }
 
-  .slide:nth-child(1) { background: linear-gradient(135deg, #0D0D0D 0%, #1a1400 40%, #3d2f00 70%, #0D0D0D 100%); }
-  .slide:nth-child(2) { background: linear-gradient(135deg, #0D0D0D 0%, #001a0d 40%, #00301a 70%, #0D0D0D 100%); }
-  .slide:nth-child(3) { background: linear-gradient(135deg, #0D0D0D 0%, #0d001a 40%, #1a0030 70%, #0D0D0D 100%); }
+  .slide-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+    z-index: 1;
+  }
+
+  .slide:nth-child(1) { background: #0D0D0D; }
+  .slide:nth-child(2) { background: #0D0D0D; }
+  .slide:nth-child(3) { background: #0D0D0D; }
 
   .slide-road {
     position: absolute;
@@ -157,6 +169,7 @@
     height: 80px;
     background: var(--dark);
     overflow: hidden;
+    z-index: 2;
   }
 
   .slide-road::before {
@@ -169,19 +182,9 @@
     transform: translateY(-50%);
   }
 
-  .slide-img-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 160px;
-    opacity: .06;
-  }
-
   .slide-content {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     text-align: center;
     padding: 0 20px;
     max-width: 860px;
@@ -306,7 +309,7 @@
   .section-desc { max-width: 540px; color: rgba(255,255,255,.6); font-size: 16px; line-height: 1.75; margin-bottom: 48px; }
   .gold-line { width: 60px; height: 4px; background: var(--gold); border-radius: 2px; margin-bottom: 32px; }
 
-  /* ── SOBRE (ATUALIZADO PARA IMAGEM) ── */
+  /* ── SOBRE ── */
   #sobre {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -317,23 +320,25 @@
   .sobre-visual {
     position: relative;
     border-radius: 12px;
-    aspect-ratio: 4/3;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     background: var(--dark2);
     box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   }
 
   .sobre-img {
     width: 100%;
-    height: 100%;
-    object-fit: cover; /* Faz a imagem preencher o espaço sem distorcer */
+    height: auto;
+    object-fit: cover;
     border-radius: 12px;
     display: block;
   }
 
   .sobre-badge {
     position: absolute;
-    bottom: -24px; right: -24px;
-    width: 140px; height: 140px;
+    bottom: -15px; right: -15px;
+    width: 110px; height: 110px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold-dark));
     display: flex; flex-direction: column;
@@ -342,12 +347,30 @@
     z-index: 2;
   }
 
-  .sobre-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--black); line-height: 1; }
-  .sobre-badge-text { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--black); text-transform: uppercase; text-align: center; padding: 0 12px; }
+  .sobre-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--black); line-height: 1; }
+  .sobre-badge-text { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--black); text-transform: uppercase; text-align: center; padding: 0 12px; }
 
   .sobre-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
   .sobre-list li { display: flex; align-items: flex-start; gap: 14px; color: rgba(255,255,255,.75); font-size: 15px; line-height: 1.6; }
   .sobre-list li::before { content: '◆'; color: var(--gold); font-size: 10px; margin-top: 5px; flex-shrink: 0; }
+
+  /* ── PROPRIETÁRIO ── */
+  #proprietario {
+    background: linear-gradient(to bottom, var(--black), var(--dark));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .perfil-img-wrapper {
+      border: 4px solid var(--gold);
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+  }
+  .perfil-img { width: 100%; display: block; filter: grayscale(20%); }
 
   /* ── SERVIÇOS ── */
   #servicos { background: var(--dark); }
@@ -357,8 +380,21 @@
   .servico-card:hover { border-color: rgba(245,200,0,.45); transform: translateY(-6px); }
   .servico-card:hover::before { transform: scaleX(1); }
   .servico-icon { font-size: 42px; margin-bottom: 18px; }
-  .servico-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .servico-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
   .servico-desc { font-size: 14px; color: rgba(255,255,255,.55); line-height: 1.7; }
+
+  /* ── GALERIA TRANSPARÊNCIA ── */
+  #transparencia { background: var(--black); }
+  .galeria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .galeria-item { position: relative; border-radius: 12px; overflow: hidden; height: 300px; border: 2px solid rgba(245,200,0,0.1); transition: transform 0.3s; }
+  .galeria-item:hover { transform: scale(1.02); border-color: var(--gold); }
+  .galeria-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .galeria-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: var(--white); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  @media(max-width: 900px) {
+    .galeria-grid { grid-template-columns: 1fr; }
+    .galeria-item { height: 250px; }
+  }
 
   /* ── POR QUE NÓS ── */
   #porquenos { position: relative; overflow: hidden; }
@@ -423,7 +459,12 @@
   .reveal.visible { opacity: 1; transform: none; }
 
   @media(max-width:900px) {
-    #sobre, #contato, .porquenos-layout, #contato { grid-template-columns: 1fr; }
+    #sobre, #contato, .porquenos-layout, #contato, #proprietario { grid-template-columns: 1fr; text-align: center; }
+    .section-desc { margin: 0 auto 48px; }
+    .gold-line { margin: 0 auto 32px; }
+    .sobre-list { text-align: left; }
+    .sobre-visual { max-width: 320px; margin-bottom: 40px; }
+    .perfil-img-wrapper { max-width: 280px; margin-bottom: 30px; }
     .footer-top { grid-template-columns: 1fr; gap: 32px; }
     .stats-inner { flex-wrap: wrap; }
     .stat-item { flex: 1 1 50%; }
@@ -436,14 +477,16 @@
 
 <nav>
   <a href="#" class="nav-logo">
-    <div class="nav-logo-badge">AE</div>
+    <div class="nav-logo-badge">
+      <img src="amizade.jpeg" alt="Logo">
+    </div>
     <div class="nav-logo-text">
       <span>Auto Escola</span>
       <span>AMIZADE</span>
     </div>
   </a>
   <ul class="nav-links">
-    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#sobre">Sobre Nós</a></li>
     <li><a href="#servicos">Serviços</a></li>
     <li><a href="#porquenos">Por que nós</a></li>
     <li><a href="#depoimentos">Depoimentos</a></li>
@@ -454,32 +497,32 @@
 <div class="hero">
   <div class="slider-track" id="sliderTrack">
     <div class="slide">
-      <div class="slide-img-placeholder">🚗</div>
+      <img src="frota6.png" alt="Banner 1" class="slide-bg-img">
       <div class="slide-road"></div>
       <div class="slide-content">
         <div class="slide-tag">Pioneira em Açailândia</div>
         <h1 class="slide-title">Sua <span>Carteira</span><br>Começa Aqui</h1>
-        <p class="slide-sub">Formando motoristas responsáveis desde nossa fundação. Venha fazer parte da família Amizade.</p>
+        <p class="slide-sub">Formando motoristas responsáveis em Açailândia e no Estado do Maranhão há mais de 20 anos.</p>
         <a href="#contato" class="slide-btn">Quero me Matricular</a>
       </div>
     </div>
     <div class="slide">
-      <div class="slide-img-placeholder">🏆</div>
+      <img src="frota5.png" alt="Banner 2" class="slide-bg-img">
       <div class="slide-road"></div>
       <div class="slide-content">
-        <div class="slide-tag">Alta Aprovação</div>
-        <h1 class="slide-title"><span>Instrutores</span><br>de Excelência</h1>
-        <p class="slide-sub">Nossa equipe de instrutores altamente qualificados garante que você chegue ao exame com total confiança.</p>
+        <div class="slide-tag">Reconhecimento Nacional</div>
+        <h1 class="slide-title"><span>Melhor</span><br>Autoescola da Região</h1>
+        <p class="slide-sub">Premiada todos os anos como referência em qualidade e comprometimento com a segurança viária.</p>
         <a href="#servicos" class="slide-btn">Conheça Nossos Serviços</a>
       </div>
     </div>
     <div class="slide">
-      <div class="slide-img-placeholder">🛡️</div>
+      <img src="frota4.png" alt="Banner 3" class="slide-bg-img">
       <div class="slide-road"></div>
       <div class="slide-content">
-        <div class="slide-tag">Segurança em 1º lugar</div>
-        <h1 class="slide-title">Dirija com<br><span>Confiança</span></h1>
-        <p class="slide-sub">Frota moderna, simuladores e aulas de direção defensiva para formar motoristas preparados para qualquer situação.</p>
+        <div class="slide-tag">Especialista em Trânsito</div>
+        <h1 class="slide-title">Educação e<br><span>Segurança</span></h1>
+        <p class="slide-sub">Sob a direção de Ralvison Brito de Souza, transformando a mobilidade em missão de impacto social.</p>
         <a href="#porquenos" class="slide-btn">Por que a Amizade?</a>
       </div>
     </div>
@@ -496,20 +539,20 @@
 <div class="stats-bar">
   <div class="stats-inner">
     <div class="stat-item reveal">
-      <div class="stat-num">+5mil</div>
-      <div class="stat-label">Alunos Formados</div>
+      <div class="stat-num">+20 Anos</div>
+      <div class="stat-label">de Experiência</div>
     </div>
     <div class="stat-item reveal">
-      <div class="stat-num">+20</div>
-      <div class="stat-label">Anos de Experiência</div>
+      <div class="stat-num">Referência</div>
+      <div class="stat-label">Regional e Nacional</div>
     </div>
     <div class="stat-item reveal">
-      <div class="stat-num">98%</div>
-      <div class="stat-label">Aprovação no 1º Exame</div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Foco na Qualidade</div>
     </div>
     <div class="stat-item reveal">
-      <div class="stat-num">#1</div>
-      <div class="stat-label">em Açailândia</div>
+      <div class="stat-num">Açailândia</div>
+      <div class="stat-label">Maranhão</div>
     </div>
   </div>
 </div>
@@ -517,25 +560,41 @@
 <section id="sobre">
   <div class="sobre-visual reveal">
     <img src="amizade.jpeg" alt="Fachada Auto Escola Amizade" class="sobre-img">
-    
     <div class="sobre-badge">
       <div class="sobre-badge-num">+20</div>
-      <div class="sobre-badge-text">Anos de história</div>
+      <div class="sobre-badge-text">Anos de Prêmios</div>
     </div>
   </div>
   <div class="reveal">
     <p class="section-eyebrow">Quem somos</p>
-    <h2 class="section-title">A Auto Escola<br><span style="color:var(--gold)">Amizade</span></h2>
+    <h2 class="section-title">Auto Escola<br><span style="color:var(--gold)">Amizade</span></h2>
     <div class="gold-line"></div>
-    <p class="section-desc">Pioneira no segmento em Açailândia – MA, a Auto Escola Amizade nasceu com o propósito de ser mais do que uma escola de condução: somos "sua amiga de verdade" no caminho para a habilitação.</p>
+    <p class="section-desc">Localizada em Açailândia-MA, a Auto Escola Amizade é uma instituição de ensino de direção veicular reconhecida pelo seu legado de qualidade na formação de condutores.</p>
     <ul class="sobre-list">
-      <li>Instrutores credenciados pelo DETRAN com vasta experiência em campo</li>
-      <li>Frota de veículos modernos e rigorosamente revisados para a sua segurança</li>
-      <li>Simuladores de última geração para o treinamento teórico e prático</li>
-      <li>Atendimento humanizado do início ao fim do processo de habilitação</li>
-      <li>Localização central e horários flexíveis para você não perder nenhuma aula</li>
+      <li>Mais de 20 anos de tradição e compromisso com o aluno</li>
+      <li>Metodologia moderna aplicada ao ensino de trânsito</li>
+      <li>Instrutores altamente capacitados e credenciados</li>
+      <li>Referência regional, estadual e até mesmo nacional no segmento</li>
+      <li>Foco em formar motoristas para um trânsito mais seguro e eficiente</li>
     </ul>
   </div>
+</section>
+
+<section id="proprietario">
+    <div class="reveal">
+      <p class="section-eyebrow">Liderança e Especialidade</p>
+      <h2 class="section-title">Ralvison Brito<br><span style="color:var(--gold)">de Souza</span></h2>
+      <div class="gold-line"></div>
+      <p class="section-desc">Empresário renomado e especialista em trânsito, Ralvison construiu uma trajetória de sucesso baseada no conhecimento e inovação. Graduado em Administração de Empresas e com diversas pós-graduações, ele transformou sua paixão pela mobilidade em uma missão social.</p>
+      <ul class="sobre-list">
+        <li>Especialista em trânsito e referência na região</li>
+        <li>Compromisso com a educação e segurança viária</li>
+        <li>Gestão focada na excelência e formação responsável</li>
+      </ul>
+    </div>
+    <div class="perfil-img-wrapper reveal">
+        <img src="adm.jpeg" alt="Ralvison Brito de Souza" class="perfil-img">
+    </div>
 </section>
 
 <section id="servicos">
@@ -546,34 +605,78 @@
   </div>
   <div class="servicos-grid">
     <div class="servico-card reveal">
-      <div class="servico-icon">🚗</div>
-      <div class="servico-title">Habilitação Categoria B</div>
-      <p class="servico-desc">O curso completo para quem deseja dirigir automóveis de passeio, com aulas teóricas e práticas.</p>
+      <div class="servico-icon"></div>
+      <div class="servico-title">Primeira Habilitação</div>
+      <p class="servico-desc">O início da sua jornada no trânsito com as categorias A e B.</p>
     </div>
     <div class="servico-card reveal">
-      <div class="servico-icon">🛵</div>
-      <div class="servico-title">Habilitação Categoria A</div>
-      <p class="servico-desc">Formação para motociclistas com foco em segurança, técnica e direção defensiva.</p>
+      <div class="servico-icon"></div>
+      <div class="servico-title">Conjugação</div>
+      <p class="servico-desc">Processo integrado para otimizar sua formação.</p>
     </div>
     <div class="servico-card reveal">
-      <div class="servico-icon">🚛</div>
+      <div class="servico-icon"></div>
       <div class="servico-title">Adição de Categoria</div>
-      <p class="servico-desc">Já tem habilitação? Adicione novas categorias como C, D ou E para ampliar suas possibilidades.</p>
+      <p class="servico-desc">Expanda suas possibilidades como motorista profissional.</p>
     </div>
     <div class="servico-card reveal">
-      <div class="servico-icon">🔄</div>
+      <div class="servico-icon"></div>
       <div class="servico-title">Renovação de CNH</div>
-      <p class="servico-desc">Processo ágil e descomplicado para renovar sua Carteira Nacional de Habilitação.</p>
+      <p class="servico-desc">Agilidade para manter seu documento sempre em dia.</p>
     </div>
     <div class="servico-card reveal">
-      <div class="servico-icon">📋</div>
-      <div class="servico-title">Reciclagem</div>
-      <p class="servico-desc">Curso de reciclagem obrigatória para condutores infratores, com aulas dinâmicas e didáticas.</p>
+      <div class="servico-icon"></div>
+      <div class="servico-title">Curso de Atualização</div>
+      <p class="servico-desc">Mantenha-se informado sobre as novas leis de trânsito.</p>
     </div>
     <div class="servico-card reveal">
-      <div class="servico-icon">💻</div>
-      <div class="servico-title">Simulador Virtual</div>
-      <p class="servico-desc">Treine em ambientes virtuais antes da pista. Tecnologia que aumenta sua confiança no volante.</p>
+      <div class="servico-icon"></div>
+      <div class="servico-title">Curso de Reciclagem</div>
+      <p class="servico-desc">Recupere sua CNH com ensino focado e responsável.</p>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-icon"></div>
+      <div class="servico-title">Aulas p/ Habilitados</div>
+      <p class="servico-desc">Treinamento específico para quem deseja ganhar confiança.</p>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-icon"></div>
+      <div class="servico-title">Direção Defensiva</div>
+      <p class="servico-desc">Técnicas avançadas para evitar acidentes e preservar vidas.</p>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-icon"></div>
+      <div class="servico-title">Mudança de Categorias</div>
+      <p class="servico-desc">Evolução de categoria para fins profissionais e pessoais.</p>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-icon"></div>
+      <div class="servico-title">Especialização</div>
+      <p class="servico-desc">Cursos técnicos para capacitação máxima no trânsito.</p>
+    </div>
+  </div>
+</section>
+
+<section id="transparencia">
+  <div style="text-align:center;margin-bottom:56px" class="reveal">
+    <p class="section-eyebrow">Originalidade e Transparência</p>
+    <h2 class="section-title">Nosso Dia a Dia</h2>
+    <div class="gold-line" style="margin:0 auto 32px"></div>
+    <p class="section-desc" style="margin: 0 auto 48px">Conheça a realidade da Auto Escola Amizade: ambiente de aprendizado focado e momentos de integração com nossos alunos.</p>
+  </div>
+  
+  <div class="galeria-grid reveal">
+    <div class="galeria-item">
+      <img src="aula1.jpeg" alt="Alunos em aula teórica">
+      <div class="galeria-caption">Foco Total na Aprendizagem</div>
+    </div>
+    <div class="galeria-item">
+      <img src="turma1.jpeg" alt="Turma comemorando">
+      <div class="galeria-caption">Sucesso e Confraternização</div>
+    </div>
+    <div class="galeria-item">
+      <img src="turma2.jpeg" alt="Alunos comemorando e comendo">
+      <div class="galeria-caption">Nossa Família Amizade</div>
     </div>
   </div>
 </section>
@@ -581,32 +684,31 @@
 <section id="porquenos">
   <div class="porquenos-layout">
     <div class="reveal">
-      <p class="section-eyebrow">Nossos diferenciais</p>
-      <h2 class="section-title">Por que escolher<br><span style="color:var(--gold)">a Amizade?</span></h2>
+      <p class="section-eyebrow">Diferenciais</p>
+      <h2 class="section-title">Por que escolher<br>a <span style="color:var(--gold)">Amizade</span>?</h2>
       <div class="gold-line"></div>
-      <p class="section-desc">Há mais de duas décadas somos referência em habilitação em Açailândia. Nosso compromisso vai além do exame: formamos motoristas seguros e conscientes.</p>
-      <a href="#contato" class="slide-btn" style="display:inline-block">Fale Conosco</a>
+      <p class="section-desc">Oferecemos uma estrutura completa e suporte personalizado para que você se sinta seguro desde a primeira aula teórica até o exame prático final.</p>
     </div>
     <div class="porquenos-cards reveal">
       <div class="pq-card">
-        <div class="pq-card-icon">⭐</div>
-        <div class="pq-card-title">Alta Aprovação</div>
-        <p class="pq-card-desc">98% dos nossos alunos aprovam na primeira tentativa.</p>
+        <div class="pq-card-icon"></div>
+        <div class="pq-card-title">Rapidez</div>
+        <p class="pq-card-desc">Processos otimizados para você tirar sua CNH no menor tempo possível.</p>
       </div>
       <div class="pq-card">
-        <div class="pq-card-icon">🕐</div>
-        <div class="pq-card-title">Horários Flexíveis</div>
-        <p class="pq-card-desc">Aulas de manhã, tarde e noite para se adaptar à sua rotina.</p>
+        <div class="pq-card-icon"></div>
+        <div class="pq-card-title">Qualidade</div>
+        <p class="pq-card-desc">Frota renovada e material didático sempre atualizado.</p>
       </div>
       <div class="pq-card">
-        <div class="pq-card-icon">🏅</div>
-        <div class="pq-card-title">Equipe Expert</div>
-        <p class="pq-card-desc">Instrutores certificados pelo DETRAN e em constante atualização.</p>
+        <div class="pq-card-icon"></div>
+        <div class="pq-card-title">Confiança</div>
+        <p class="pq-card-desc">Mais de duas décadas de aprovação e alunos satisfeitos.</p>
       </div>
       <div class="pq-card">
-        <div class="pq-card-icon">💳</div>
-        <div class="pq-card-title">Facilidade no Pag.</div>
-        <p class="pq-card-desc">Parcele no cartão, PIX ou boleto sem burocracia.</p>
+        <div class="pq-card-icon"></div>
+        <div class="pq-card-title">Localização</div>
+        <p class="pq-card-desc">No coração de Açailândia, fácil acesso para todos.</p>
       </div>
     </div>
   </div>
@@ -614,41 +716,41 @@
 
 <section id="depoimentos">
   <div class="reveal">
-    <p class="section-eyebrow">O que dizem nossos alunos</p>
-    <h2 class="section-title">Depoimentos</h2>
+    <p class="section-eyebrow">Depoimentos</p>
+    <h2 class="section-title">O que dizem <span>Nossos Alunos</span></h2>
     <div class="gold-line"></div>
-    <p class="section-desc">Milhares de motoristas aprovados. Veja o que eles têm a dizer sobre a experiência na Auto Escola Amizade.</p>
+    <p class="section-desc">A satisfação de quem realizou o sonho da habilitação com a gente.</p>
   </div>
   <div class="depoimentos-grid">
     <div class="dep-card reveal">
-      <div class="dep-quote">"</div>
-      <p class="dep-text">Fiz minha habilitação na Amizade e foi a melhor decisão! Os instrutores são super pacientes e didáticos. Passei na primeira tentativa!</p>
+      <div class="dep-quote">“</div>
+      <p class="dep-text">A experiência foi incrível! Os instrutores são muito pacientes e a estrutura da Auto Escola Amizade é nota 10. Recomendo a todos em Açailândia.</p>
       <div class="dep-author">
-        <div class="dep-avatar">M</div>
+        <div class="dep-avatar">RC</div>
         <div>
-          <div class="dep-name">Maria Souza</div>
+          <div class="dep-name">Ricardo Cavalcante</div>
           <div class="dep-stars">★★★★★</div>
         </div>
       </div>
     </div>
     <div class="dep-card reveal">
-      <div class="dep-quote">"</div>
-      <p class="dep-text">Atendimento nota 10! Me senti acolhido desde o primeiro dia. A estrutura é ótima e os professores realmente se importam com o aluno.</p>
+      <div class="dep-quote">“</div>
+      <p class="dep-text">Tinha muito medo de dirigir, mas com as aulas para habilitados consegui a confiança que precisava. Hoje dirijo para todo lugar sem medo!</p>
       <div class="dep-author">
-        <div class="dep-avatar">J</div>
+        <div class="dep-avatar">ML</div>
         <div>
-          <div class="dep-name">João Pedro</div>
+          <div class="dep-name">Maria Lúcia Silva</div>
           <div class="dep-stars">★★★★★</div>
         </div>
       </div>
     </div>
     <div class="dep-card reveal">
-      <div class="dep-quote">"</div>
-      <p class="dep-text">Tinha muito medo de não passar no exame prático, mas os instrutores me deram toda a confiança que precisava. Aprovada! Recomendo demais.</p>
+      <div class="dep-quote">“</div>
+      <p class="dep-text">Atendimento excelente desde a recepção até a prova final. Tudo muito organizado e transparente. Ralvison e sua equipe estão de parabéns.</p>
       <div class="dep-author">
-        <div class="dep-avatar">A</div>
+        <div class="dep-avatar">JS</div>
         <div>
-          <div class="dep-name">Ana Lima</div>
+          <div class="dep-name">João Santos</div>
           <div class="dep-stars">★★★★★</div>
         </div>
       </div>
@@ -667,14 +769,14 @@
         <div class="contato-icon">📍</div>
         <div class="contato-item-text">
           <strong>Endereço</strong>
-          <span>Açailândia – MA<br>Centro, próximo à área principal</span>
+          <span>Av. Tácito de Caldas, 261<br>Centro - Açailândia-MA</span>
         </div>
       </div>
       <div class="contato-item">
         <div class="contato-icon">📞</div>
         <div class="contato-item-text">
-          <strong>Telefone / WhatsApp</strong>
-          <span>(99) 9 9999-9999</span>
+          <strong>Telefones</strong>
+          <span>(99) 3538-2746 / (99) 99144-2884</span>
         </div>
       </div>
       <div class="contato-item">
@@ -695,7 +797,7 @@
       </div>
       <div class="form-group">
         <label>Telefone / WhatsApp</label>
-        <input type="tel" placeholder="(99) 9 9999-9999">
+        <input type="tel" placeholder="(99) 9 9144-2884">
       </div>
     </div>
     <div class="form-group">
@@ -706,11 +808,11 @@
       <label>Serviço de Interesse</label>
       <select>
         <option value="">Selecione um serviço</option>
-        <option>Habilitação Categoria A</option>
-        <option>Habilitação Categoria B</option>
+        <option>Primeira Habilitação</option>
         <option>Adição de Categoria</option>
         <option>Renovação de CNH</option>
         <option>Reciclagem</option>
+        <option>Especialização</option>
       </select>
     </div>
     <div class="form-group">
@@ -725,42 +827,43 @@
   <div class="footer-top">
     <div class="footer-brand">
       <a href="#" class="nav-logo" style="margin-bottom:8px;display:inline-flex">
-        <div class="nav-logo-badge">AE</div>
+        <div class="nav-logo-badge">
+          <img src="amizade.jpeg" alt="Logo">
+        </div>
         <div class="nav-logo-text">
           <span>Auto Escola</span>
           <span>AMIZADE</span>
         </div>
       </a>
-      <p>"Sua amiga de verdade" – Formando motoristas seguros e responsáveis em Açailândia há mais de 20 anos.</p>
+      <p>"Sua amiga de verdade" – Sob a direção de Ralvison Brito de Souza, formando motoristas em Açailândia há mais de 20 anos.</p>
     </div>
     <div>
       <div class="footer-col-title">Navegação</div>
       <ul class="footer-links">
         <li><a href="#sobre">Sobre Nós</a></li>
         <li><a href="#servicos">Serviços</a></li>
-        <li><a href="#porquenos">Diferenciais</a></li>
-        <li><a href="#depoimentos">Depoimentos</a></li>
+        <li><a href="#proprietario">Direção</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
     </div>
     <div>
       <div class="footer-col-title">Serviços</div>
       <ul class="footer-links">
-        <li><a href="#servicos">Categoria A</a></li>
-        <li><a href="#servicos">Categoria B</a></li>
+        <li><a href="#servicos">Primeira Habilitação</a></li>
         <li><a href="#servicos">Adição de Categoria</a></li>
         <li><a href="#servicos">Renovação CNH</a></li>
         <li><a href="#servicos">Reciclagem</a></li>
+        <li><a href="#servicos">Aulas p/ Habilitados</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 Auto Escola <span>Amizade</span>. Todos os direitos reservados.</span>
+    <span>© 2026 Auto Escola <span>Amizade</span>. Todos os direitos reservados.</span>
     <span>Açailândia – MA</span>
   </div>
 </footer>
 
-<a href="https://wa.me/5599999999999" target="_blank" class="whatsapp-float" title="Fale no WhatsApp">
+<a href="https://wa.me/5599991442884" target="_blank" class="whatsapp-float" title="Fale no WhatsApp">
   💬
 </a>
 
