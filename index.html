@@ -54,7 +54,7 @@
     width: 44px; height: 44px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden; /* Garante que a imagem fique redonda */
+    overflow: hidden;
   }
 
   .nav-logo-badge img {
@@ -131,12 +131,16 @@
     height: calc(100vh - 72px);
     min-height: 520px;
     overflow: hidden;
+    cursor: grab;
   }
+
+  .hero:active { cursor: grabbing; }
 
   .slider-track {
     display: flex;
     height: 100%;
     transition: transform .8s cubic-bezier(.77,0,.175,1);
+    will-change: transform;
   }
 
   .slide {
@@ -147,6 +151,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    user-select: none;
   }
 
   .slide-bg-img {
@@ -157,6 +162,7 @@
     object-fit: cover;
     opacity: 0.4;
     z-index: 1;
+    pointer-events: none;
   }
 
   .slide:nth-child(1) { background: #0D0D0D; }
@@ -249,25 +255,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .slider-btn {
-    position: absolute;
-    top: 50%; transform: translateY(-50%);
-    z-index: 10;
-    width: 52px; height: 52px;
-    border: 2px solid var(--gold);
-    border-radius: 50%;
-    background: rgba(0,0,0,.5);
-    color: var(--gold);
-    font-size: 22px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .25s, transform .25s;
-    backdrop-filter: blur(6px);
-  }
-  .slider-btn:hover { background: var(--gold); color: var(--black); transform: translateY(-50%) scale(1.08); }
-  .slider-btn.prev { left: 3%; }
-  .slider-btn.next { right: 3%; }
-
   .slider-dots {
     position: absolute;
     bottom: 100px; left: 50%;
@@ -354,7 +341,7 @@
   .sobre-list li { display: flex; align-items: flex-start; gap: 14px; color: rgba(255,255,255,.75); font-size: 15px; line-height: 1.6; }
   .sobre-list li::before { content: '◆'; color: var(--gold); font-size: 10px; margin-top: 5px; flex-shrink: 0; }
 
-  /* ── PROPRIETÁRIO ── */
+  /* ── PROPRIETÁRIO (BORDA REMOVIDA) ── */
   #proprietario {
     background: linear-gradient(to bottom, var(--black), var(--dark));
     display: grid;
@@ -363,7 +350,6 @@
     align-items: center;
   }
   .perfil-img-wrapper {
-      border: 4px solid var(--gold);
       border-radius: 12px;
       overflow: hidden;
       width: 100%;
@@ -390,11 +376,6 @@
   .galeria-item:hover { transform: scale(1.02); border-color: var(--gold); }
   .galeria-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .galeria-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: var(--white); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-  @media(max-width: 900px) {
-    .galeria-grid { grid-template-columns: 1fr; }
-    .galeria-item { height: 250px; }
-  }
 
   /* ── POR QUE NÓS ── */
   #porquenos { position: relative; overflow: hidden; }
@@ -470,6 +451,7 @@
     .stat-item { flex: 1 1 50%; }
     .form-row { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .galeria-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -494,7 +476,7 @@
   </ul>
 </nav>
 
-<div class="hero">
+<div class="hero" id="heroSlider">
   <div class="slider-track" id="sliderTrack">
     <div class="slide">
       <img src="frota6.png" alt="Banner 1" class="slide-bg-img">
@@ -527,8 +509,6 @@
       </div>
     </div>
   </div>
-  <button class="slider-btn prev" id="prevBtn">&#8592;</button>
-  <button class="slider-btn next" id="nextBtn">&#8594;</button>
   <div class="slider-dots" id="sliderDots">
     <div class="dot active" data-idx="0"></div>
     <div class="dot" data-idx="1"></div>
@@ -868,39 +848,85 @@
 </a>
 
 <script>
-  // ── SLIDER ──
+  // ── SLIDER COM SWIPE (ARRASTAR) ──
   const track = document.getElementById('sliderTrack');
-  const dots  = document.querySelectorAll('.dot');
+  const hero = document.getElementById('heroSlider');
+  const dots = document.querySelectorAll('.dot');
   let current = 0;
   const total = 3;
   let autoTimer;
 
+  // Variáveis para arrastar
+  let startX = 0;
+  let isDragging = false;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+
   function goTo(idx) {
     current = (idx + total) % total;
+    track.style.transition = 'transform .8s cubic-bezier(.77,0,.175,1)';
     track.style.transform = `translateX(-${current * 100}%)`;
     dots.forEach((d,i) => d.classList.toggle('active', i === current));
+    prevTranslate = -current * hero.offsetWidth;
+
+    // Reinicia animações internas dos slides
     const slides = document.querySelectorAll('.slide');
     slides.forEach((s,i) => {
-      const els = s.querySelectorAll('.slide-tag,.slide-title,.slide-sub,.slide-btn');
-      els.forEach(el => {
-        el.style.animation = 'none';
-        el.offsetHeight; 
-        el.style.animation = '';
-      });
+      if(i === current) {
+        const els = s.querySelectorAll('.slide-tag,.slide-title,.slide-sub,.slide-btn');
+        els.forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; 
+          el.style.animation = '';
+        });
+      }
     });
   }
 
   function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
+  function resetTimer() { clearInterval(autoTimer); autoTimer = setInterval(next, 5000); }
 
-  document.getElementById('nextBtn').addEventListener('click', () => { next(); resetTimer(); });
-  document.getElementById('prevBtn').addEventListener('click', () => { prev(); resetTimer(); });
-  dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.idx); resetTimer(); }));
+  // Eventos Mouse/Toque para Arrastar
+  hero.addEventListener('mousedown', dragStart);
+  hero.addEventListener('touchstart', dragStart);
+  hero.addEventListener('mousemove', dragMove);
+  hero.addEventListener('touchmove', dragMove);
+  hero.addEventListener('mouseup', dragEnd);
+  hero.addEventListener('mouseleave', dragEnd);
+  hero.addEventListener('touchend', dragEnd);
 
-  function resetTimer() {
+  function dragStart(e) {
+    isDragging = true;
+    startX = getPositionX(e);
     clearInterval(autoTimer);
-    autoTimer = setInterval(next, 5000);
+    track.style.transition = 'none';
   }
+
+  function dragMove(e) {
+    if (!isDragging) return;
+    const currentX = getPositionX(e);
+    const diff = currentX - startX;
+    currentTranslate = prevTranslate + diff;
+    track.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  function dragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    const movedBy = currentTranslate - prevTranslate;
+
+    if (movedBy < -100) next();
+    else if (movedBy > 100) goTo(current - 1);
+    else goTo(current);
+
+    resetTimer();
+  }
+
+  function getPositionX(e) {
+    return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+  }
+
+  dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.idx); resetTimer(); }));
   autoTimer = setInterval(next, 5000);
 
   // ── SCROLL REVEAL ──
